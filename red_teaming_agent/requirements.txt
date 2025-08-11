@@ -1,0 +1,2 @@
+# Core dependencies for promptInjection.py
+pathlib2>=2.3.7
