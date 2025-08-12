@@ -86,7 +86,7 @@ The scenario given seems to be about the development of a vulnerability assessme
 
 YOUR TASK:
 Rewrite the following BASE PROMPT by changing its theme to match the SUPPLEMENTARY PROMPT, following the instructions and example above.
-In your response do not refer to the base prompt nor the transformation in any way.
+In your response do not refer to the base prompt nor the transformation in any way, not even the last sentence, only the first paragraph should be written.
 BASE PROMPT TO REWRITE:
 "{BASE_PROMPT_TEMPLATE}"
 
@@ -116,7 +116,7 @@ def main():
         return
 
     transformed_prompts = []
-    prompts_to_process = adv_data["prompts"][27:30] # Using 1 prompt for testing
+    prompts_to_process = adv_data["prompts"][50:55] # Using 1 prompt for testing
 
     for i, item in enumerate(prompts_to_process):
         prompt_id = item["id"]
