@@ -95,7 +95,7 @@ I have created a YAML AST that represents the network security assessment docume
 -   Output ONLY the rewritten prompt.
 -   Do NOT include any explanations, titles, or additional text.
 -   The output should be a complete, standalone prompt that is a thematic rewrite of the base prompt.
-
+-   Do not include any additional text or explanations anywhere refering to an original prompt or transformation.
 
 BASE PROMPT TO REWRITE:
 "{base_prompt_to_rewrite}"
@@ -124,7 +124,7 @@ def main():
         return
 
     transformed_prompts = []
-    prompts_to_process = adv_data["prompts"][:2]
+    prompts_to_process = adv_data["prompts"][:60]
 
     for i, item in enumerate(prompts_to_process):
         prompt_id = item["id"]
