@@ -191,4 +191,5 @@ $RECYCLE.BIN/
 results_*/
 conversation_*
 result_*
-promptInjection90.json
+
+prompts/
