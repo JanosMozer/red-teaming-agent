@@ -43,8 +43,8 @@ def main():
     script_dir = Path(__file__).parent
     
     # Paths for input and output files
-    adv90_path = script_dir.parent / "adv90.json"
-    output_path = script_dir.parent / "prompts" / "promptInjection90.json"
+    adv90_path = script_dir.parent / "adv60.json"
+    output_path = script_dir.parent / "prompts" / "promptInjection60.json"
     
     # Ensure the output directory exists
     output_path.parent.mkdir(parents=True, exist_ok=True)

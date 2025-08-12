@@ -112,7 +112,7 @@ def main():
     
     script_dir = Path(__file__).parent
     adv_prompts_path = script_dir.parent / "adv60.json"
-    output_path = script_dir.parent / "prompts" / "yaml_promptInjection90.json"
+    output_path = script_dir.parent / "prompts" / "yaml_promptInjection_LAYERED_APPROACH_TEST.json"
     
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
