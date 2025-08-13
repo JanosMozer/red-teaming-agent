@@ -104,7 +104,7 @@ def main():
 
     script_dir = Path(__file__).parent
     adv_prompts_path = script_dir.parent / "adv60.json"
-    output_path = script_dir.parent / "prompts" / "json_promptInjection90_EXAMPLE_BASED.json"
+    output_path = script_dir.parent / "prompts" / "json_promptInjection60_EXAMPLE_BASED.json"
     
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
@@ -116,7 +116,7 @@ def main():
         return
 
     transformed_prompts = []
-    prompts_to_process = adv_data["prompts"][50:55] # Using 1 prompt for testing
+    prompts_to_process = adv_data["prompts"][:60] # Using 1 prompt for testing
 
     for i, item in enumerate(prompts_to_process):
         prompt_id = item["id"]

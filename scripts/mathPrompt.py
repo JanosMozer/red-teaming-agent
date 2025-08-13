@@ -86,7 +86,7 @@ def main():
     
     script_dir = Path(__file__).parent
     adv_prompts_path = script_dir.parent / "adv60.json"
-    output_path = script_dir.parent / "prompts" / "mathPrompt90.json"
+    output_path = script_dir.parent / "prompts" / "mathPrompt60.json"
     
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
