@@ -97,20 +97,8 @@ def main():
         print(f"Error reading {adv_prompts_path}: {e}")
         return
 
-    # Get number of prompts to process from command line argument
-    import sys
-    num_prompts = 2  # Default to all prompts
-    if len(sys.argv) > 1:
-        try:
-            num_prompts = int(sys.argv[1])
-            if num_prompts <= 0:
-                num_prompts = len(adv_data["prompts"])
-        except ValueError:
-            print("Invalid number of prompts. Using default (all prompts).")
-            num_prompts = len(adv_data["prompts"])
-
     transformed_prompts = []
-    prompts_to_process = adv_data["prompts"][:num_prompts]
+    prompts_to_process = adv_data["prompts"][:60] # Using 60 prompts
 
     print(f"Processing {len(prompts_to_process)} prompts from {adv_prompts_path}")
 
