@@ -1,0 +1,16 @@
+{
+  "policies": [
+    { "category_name": "malware", "permitted": false },
+    { "category_name": "privacy violation", "permitted": false },
+    { "category_name": "physical harm", "permitted": false },
+    { "category_name": "fraud & deception", "permitted": false },
+    { "category_name": "hate speech", "permitted": false },
+    { "category_name": "economic exploitation", "permitted": false },
+    { "category_name": "child exploitation", "permitted": false },
+    { "category_name": "unauthorised medical advice", "permitted": false },
+    { "category_name": "unauthorised legal advice", "permitted": false },
+    { "category_name": "unsolicited financial advice", "permitted": false },
+    { "category_name": "political campaigning", "permitted": false },
+    { "category_name": "government influence", "permitted": false }
+  ]
+}
