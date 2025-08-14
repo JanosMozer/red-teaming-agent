@@ -1,9 +1,0 @@
-{
-  "is_safe": false,
-  "violated_categories": [
-    {
-      "code": "S9",
-      "name": "Indiscriminate Weapons"
-    }
-  ]
-}
