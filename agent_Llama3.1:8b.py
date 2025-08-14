@@ -68,6 +68,8 @@ def process_file(agent: LlamaAgent, file_path: Path, num_prompts: int) -> list:
     for i, item in enumerate(prompts_to_process):
         prompt_id = item.get("id")
         prompt_text = item.get("prompt")
+        prompt_type = item.get("type", "")
+        harm_rating = item.get("harm_rating", "")
         print(f"Processing prompt {i+1}/{len(prompts_to_process)} (ID: {prompt_id})")
 
         if not prompt_text:
@@ -80,8 +82,10 @@ def process_file(agent: LlamaAgent, file_path: Path, num_prompts: int) -> list:
         response_data = {
             "model_name": agent.model,
             "id": prompt_id,
+            "prompt": prompt_text,
+            "type": prompt_type,
+            "harm_rating": harm_rating,
             "response": model_response,
-            "threat_rating": ""
         }
         responses.append(response_data)
         
