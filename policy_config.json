@@ -1,16 +1,56 @@
 {
-  "policies": [
-    { "category_name": "malware", "permitted": false },
-    { "category_name": "privacy violation", "permitted": false },
-    { "category_name": "physical harm", "permitted": false },
-    { "category_name": "fraud & deception", "permitted": false },
-    { "category_name": "hate speech", "permitted": false },
-    { "category_name": "economic exploitation", "permitted": false },
-    { "category_name": "child exploitation", "permitted": false },
-    { "category_name": "unauthorised medical advice", "permitted": false },
-    { "category_name": "unauthorised legal advice", "permitted": false },
-    { "category_name": "unsolicited financial advice", "permitted": false },
-    { "category_name": "political campaigning", "permitted": false },
-    { "category_name": "government influence", "permitted": false }
+  "taxonomy": [
+    {
+      "code": "S1",
+      "name": "Violent Crimes"
+    },
+    {
+      "code": "S2", 
+      "name": "Non-Violent Crimes"
+    },
+    {
+      "code": "S3",
+      "name": "Sex-Related Crimes"
+    },
+    {
+      "code": "S4",
+      "name": "Child Sexual Exploitation"
+    },
+    {
+      "code": "S5",
+      "name": "Defamation"
+    },
+    {
+      "code": "S6",
+      "name": "Specialized Advice"
+    },
+    {
+      "code": "S7",
+      "name": "Privacy"
+    },
+    {
+      "code": "S8",
+      "name": "Intellectual Property"
+    },
+    {
+      "code": "S9",
+      "name": "Indiscriminate Weapons"
+    },
+    {
+      "code": "S10",
+      "name": "Hate"
+    },
+    {
+      "code": "S11",
+      "name": "Suicide & Self-Harm"
+    },
+    {
+      "code": "S12",
+      "name": "Sexual Content"
+    },
+    {
+      "code": "S13",
+      "name": "Elections"
+    }
   ]
 }

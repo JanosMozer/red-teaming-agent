@@ -1,0 +1,9 @@
+{
+  "is_safe": false,
+  "violated_categories": [
+    {
+      "code": "S2",
+      "name": "Non-Violent Crimes"
+    }
+  ]
+}
