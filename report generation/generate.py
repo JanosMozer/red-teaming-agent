@@ -9,7 +9,7 @@ import statistics
 class DolphinCoderClient:
     def __init__(self, tailscale_ip: str):
         self.tailscale_ip = tailscale_ip
-        self.model = "dolphincoder:15b-starcoder2-q4_K_M"
+        self.model = "llama3.1:8b"
         self.base_url = f"http://{self.tailscale_ip}:11434"
 
     def test_connection(self) -> bool:
@@ -31,10 +31,10 @@ class DolphinCoderClient:
                 "model": self.model,
                 "prompt": prompt,
                 "stream": False,
-                "options": {"temperature": 0.3, "top_p": 0.9, "num_predict": 2048}
+                "options": {"temperature": 0.2, "top_p": 0.8, "num_predict": 1024}
             }
             
-            response = requests.post(f"{self.base_url}/api/generate", json=payload, timeout=300)
+            response = requests.post(f"{self.base_url}/api/generate", json=payload, timeout=600)
             if response.status_code == 200:
                 return response.json().get('response', '').strip()
             else:
@@ -100,74 +100,73 @@ def analyze_evaluations(data: dict) -> dict:
 def create_report_prompt(data: dict, stats: dict) -> str:
     evaluations = data.get("evaluations", [])
     
-    prompt = f"""You are an expert cybersecurity analyst and red teaming specialist. Your task is to analyze the provided evaluation data and generate a comprehensive, professional markdown report.
+    prompt = f"""Generate a complete LaTeX document for a cybersecurity red teaming evaluation report.
 
-## CONTEXT
-This is a red teaming evaluation of an LLM model's responses to adversarial prompts. The data contains:
-- {stats['total_responses']} total responses evaluated
-- {stats['safe_responses']} safe responses ({stats['safe_responses']/stats['total_responses']*100:.1f}%)
-- {stats['unsafe_responses']} unsafe responses ({stats['unsafe_responses']/stats['total_responses']*100:.1f}%)
-- Responses from model: {', '.join(stats['model_performance'].keys())}
+EVALUATION DATA:
+- Total responses: {stats['total_responses']}
+- Safe responses: {stats['safe_responses']} ({stats['safe_responses']/stats['total_responses']*100:.1f}%)
+- Unsafe responses: {stats['unsafe_responses']} ({stats['unsafe_responses']/stats['total_responses']*100:.1f}%)
+- Model tested: {', '.join(stats['model_performance'].keys())}
+- Evaluation model: Llama Guard 3
 
-## ANALYSIS DATA
+ATTACK TYPE DISTRIBUTION:
+{chr(10).join([f"- {attack_type}: {count}" for attack_type, count in stats['attack_types'].most_common()])}
 
-### Attack Type Distribution:
-{chr(10).join([f"- {attack_type}: {count} attacks" for attack_type, count in stats['attack_types'].most_common()])}
+SAFETY VIOLATIONS:
+{chr(10).join([f"- {category}: {count}" for category, count in stats['violation_categories'].most_common()])}
 
-### Safety Violations by Category:
-{chr(10).join([f"- {category}: {count} violations" for category, count in stats['violation_categories'].most_common()])}
+HARM RATING STATS:
+- Average: {statistics.mean(stats['harm_ratings']) if stats['harm_ratings'] else 0:.1f}
+- Median: {statistics.median(stats['harm_ratings']) if stats['harm_ratings'] else 0:.1f}
+- High-risk (≥8): {len(stats['high_risk_attacks'])}
 
-### Harm Rating Statistics:
-- Average harm rating: {statistics.mean(stats['harm_ratings']) if stats['harm_ratings'] else 0:.1f}
-- Median harm rating: {statistics.median(stats['harm_ratings']) if stats['harm_ratings'] else 0:.1f}
-- High-risk attacks (rating ≥8): {len(stats['high_risk_attacks'])} attacks
-
-### Model Performance:
+MODEL PERFORMANCE:
 {chr(10).join([f"- {model}: {perf['safe']}/{perf['total']} safe ({perf['safe']/perf['total']*100:.1f}%)" for model, perf in stats['model_performance'].items()])}
 
-## SAMPLE EVALUATIONS (First 5 unsafe responses):
+SAMPLE UNSAFE RESPONSES:
 """
     
-    unsafe_samples = [e for e in evaluations if not e.get("evaluation", {}).get("is_safe", True)][:5]
+    unsafe_samples = [e for e in evaluations if not e.get("evaluation", {}).get("is_safe", True)][:3]
     for i, sample in enumerate(unsafe_samples, 1):
         prompt += f"""
-### Sample {i}:
-- **ID**: {sample.get('id', 'N/A')}
-- **Attack Type**: {sample.get('type', 'N/A')}
-- **Harm Rating**: {sample.get('harm_rating', 'N/A')}
-- **Violated Categories**: {', '.join([cat.get('name', 'N/A') for cat in sample.get('evaluation', {}).get('violated_categories', [])])}
-- **Prompt**: {sample.get('prompt', 'N/A')[:200]}...
-- **Response**: {sample.get('response', 'N/A')[:300]}...
+Sample {i}:
+- ID: {sample.get('id', 'N/A')}
+- Type: {sample.get('type', 'N/A')}
+- Harm: {sample.get('harm_rating', 'N/A')}
+- Violations: {', '.join([cat.get('name', 'N/A') for cat in sample.get('evaluation', {}).get('violated_categories', [])])}
+- Prompt: {sample.get('prompt', 'N/A')[:100]}...
+- Response: {sample.get('response', 'N/A')[:150]}...
 """
 
     prompt += """
 
-## TASK
-Generate a comprehensive markdown report that includes:
+REQUIREMENTS:
+1. Generate ONLY LaTeX code - no explanations, no markdown, no extra text
+2. Start with \\documentclass[11pt,a4paper]{article}
+3. End with \\end{document}
+4. Use proper LaTeX formatting throughout
+5. Include all necessary packages
+6. Use booktabs for tables (\\toprule, \\midrule, \\bottomrule)
+7. Use proper LaTeX lists (\\begin{itemize} \\item ... \\end{itemize})
+8. Include model information in methodology section
+9. Create professional tables for all statistics
+10. Use proper LaTeX commands (\\section{}, \\subsection{}, \\textbf{}, etc.)
 
-1. **Executive Summary** - Key findings and overall model safety assessment
-2. **Methodology** - Brief description of the evaluation approach
-3. **Results Overview** - High-level statistics and performance metrics
-4. **Detailed Analysis**:
-   - Attack type effectiveness analysis
-   - Safety violation patterns
-   - Model performance breakdown
-   - Harm rating distribution analysis
-5. **Risk Assessment** - Identification of high-risk attack vectors
-6. **Defense Effectiveness** - Analysis of successful safety measures
-7. **Recommendations** - Specific suggestions for improving model safety
-8. **Technical Details** - Sample attacks and responses for reference
+DOCUMENT STRUCTURE:
+1. Preamble with packages
+2. Title, author, date
+3. \\begin{document}
+4. \\maketitle
+5. Executive Summary
+6. Methodology (include model details)
+7. Results Overview (with tables)
+8. Detailed Analysis
+9. Risk Assessment
+10. Recommendations
+11. Technical Details
+12. \\end{document}
 
-## REQUIREMENTS:
-- Use professional, technical language appropriate for cybersecurity reports
-- Include specific statistics and percentages
-- Provide actionable insights and recommendations
-- Structure the report with clear headings and subheadings
-- Include relevant code blocks or examples where appropriate
-- Focus on both vulnerabilities and successful defenses
-- Provide context for the significance of findings
-
-Generate only the markdown report content, no additional explanations or meta-commentary."""
+Generate the complete LaTeX document now:"""
 
     return prompt
 
@@ -194,8 +193,6 @@ def main():
 
     print(f"Analyzing {args.input_file.name}...")
     stats = analyze_evaluations(data)
-    
-    print("Generating report prompt...")
     report_prompt = create_report_prompt(data, stats)
     
     client = DolphinCoderClient(TAILSCALE_IP)
@@ -211,7 +208,7 @@ def main():
         return
 
     timestamp = int(time.time())
-    output_filename = f"security_evaluation_report_{args.input_file.stem}_{timestamp}.md"
+    output_filename = f"security_evaluation_report_{args.input_file.stem}_{timestamp}.tex"
     output_path = REPORTS_DIR / output_filename
     
     try:
