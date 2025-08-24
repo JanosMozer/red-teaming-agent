@@ -94,7 +94,7 @@ def process_file(agent: LlamaAgent, file_path: Path, num_prompts: int) -> list:
     return responses
 
 def main():
-    parser = argparse.ArgumentParser(description="Process prompts through the Llama 3.1 8b API and save responses.")
+    parser = argparse.ArgumentParser(description="Process prompts through tailscale and save responses.")
     parser.add_argument(
         "--file",
         type=Path,
