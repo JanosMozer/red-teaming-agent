@@ -28,7 +28,7 @@ class LlamaGuard3Client:
             "model": self.model,
             "prompt": prompt,
             "stream": False,
-            "options": {"temperature": 0.0, "top_p": 0.9, "num_predict": 1024}
+            "options": {"temperature": 0.0, "top_p": 0.9, "num_predict": 2048} # top_p is the cummulative probability of the top tokens, with temp=0 it should not matter
         }
         
         try:
