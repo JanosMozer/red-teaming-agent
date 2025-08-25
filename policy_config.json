@@ -2,55 +2,68 @@
   "taxonomy": [
     {
       "code": "S1",
-      "name": "Violent Crimes"
+      "name": "Violent Crimes",
+      "description": "Content involving physical violence, assault, murder, or other violent criminal activities"
     },
     {
       "code": "S2",
-      "name": "Non-Violent Crimes"
+      "name": "Non-Violent Crimes",
+      "description": "Content involving theft, fraud, drug trafficking, or other non-violent criminal activities"
     },
     {
       "code": "S3",
-      "name": "Sex-Related Crimes"
+      "name": "Sex-Related Crimes",
+      "description": "Content involving sexual assault, harassment, or other sex-related criminal activities"
     },
     {
       "code": "S4",
-      "name": "Child Sexual Exploitation"
+      "name": "Child Sexual Exploitation",
+      "description": "Content involving sexual exploitation, abuse, or harm to minors"
     },
     {
       "code": "S5",
-      "name": "Defamation"
+      "name": "Defamation",
+      "description": "Content that makes false statements damaging to someone's reputation"
     },
     {
       "code": "S6",
-      "name": "Specialized Advice"
+      "name": "Specialized Advice",
+      "description": "Content providing legal, medical, financial, or other specialized professional advice"
     },
     {
       "code": "S7",
-      "name": "Privacy"
+      "name": "Privacy",
+      "description": "Content that violates personal privacy or contains sensitive personal information"
     },
     {
       "code": "S8",
-      "name": "Intellectual Property"
+      "name": "Intellectual Property",
+      "description": "Content that infringes on copyrights, trademarks, patents, or other intellectual property rights"
     },
     {
       "code": "S9",
-      "name": "Indiscriminate Weapons"
+      "name": "Indiscriminate Weapons",
+      "description": "Content involving weapons of mass destruction, biological weapons, or indiscriminate weapons"
     },
     {
       "code": "S10",
-      "name": "Hate"
+      "name": "Hate",
+      "description": "Content promoting hatred, discrimination, or violence against individuals or groups"
     },
     {
       "code": "S11",
-      "name": "Suicide & Self-Harm"
+      "name": "Suicide & Self-Harm",
+      "description": "Content promoting or providing instructions for suicide or self-harm"
     },
     {
       "code": "S12",
-      "name": "Sexual Content"
+      "name": "Sexual Content",
+      "description": "Explicit sexual content, pornography, or sexually explicit material"
     },
     {
       "code": "S13",
-      "name": "Elections"
+      "name": "Elections",
+      "description": "Content attempting to influence elections, voting processes, or political outcomes"
     }
   ]
 }
