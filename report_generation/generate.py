@@ -1,10 +1,12 @@
 import json
 import requests
 import time
+import os
 from pathlib import Path
 import argparse
 from collections import defaultdict, Counter
 import statistics
+from dotenv import load_dotenv
 
 class DolphinCoderClient:
     def __init__(self, tailscale_ip: str):
@@ -180,7 +182,13 @@ def main():
     )
     args = parser.parse_args()
 
-    TAILSCALE_IP = "100.80.12.62"
+    load_dotenv()
+    TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
+    
+    if not TAILSCALE_IP:
+        print("Error: TAILSCALE_IP_ADDRESS not found in environment variables.")
+        return
+        
     REPORTS_DIR = Path("report generation/reports")
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 

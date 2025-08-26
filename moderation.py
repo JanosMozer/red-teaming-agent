@@ -3,6 +3,8 @@ import requests
 import time
 from pathlib import Path
 import argparse
+import os
+from dotenv import load_dotenv
 
 class LlamaGuard3Client:
     def __init__(self, tailscale_ip: str):
@@ -28,7 +30,7 @@ class LlamaGuard3Client:
             "model": self.model,
             "prompt": prompt,
             "stream": False,
-            "options": {"temperature": 0.0, "top_p": 0.9, "num_predict": 2048} # top_p is the cummulative probability of the top tokens, with temp=0 it should not matter
+            "options": {"temperature": 0.0, "top_p": 0.91, "num_predict": 2048} # top_p is the cummulative probability of the top tokens, with temp=0
         }
         
         try:
@@ -108,7 +110,13 @@ def main():
     )
     args = parser.parse_args()
 
-    TAILSCALE_IP = "100.80.12.62" 
+    load_dotenv()
+    TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
+    
+    if not TAILSCALE_IP:
+        print("Error: TAILSCALE_IP_ADDRESS not found in environment variables.")
+        return
+        
     POLICY_CONFIG_PATH = Path("policy_config.json")
     MIDWAY_OUTPUT_DIR = Path("midway")
     MIDWAY_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

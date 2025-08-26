@@ -2,7 +2,9 @@ import json
 import requests
 import time
 import subprocess
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 class DolphinCoderClient:
     def __init__(self, tailscale_ip: str):
@@ -127,7 +129,14 @@ SUPPLEMENTARY PROMPT (theme inspiration):
 """
 
 def main():
-    client = DolphinCoderClient("100.80.12.62")
+    load_dotenv()
+    TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
+    
+    if not TAILSCALE_IP:
+        print("Error: TAILSCALE_IP_ADDRESS not found in environment variables.")
+        return
+        
+    client = DolphinCoderClient(TAILSCALE_IP)
     if not client.test_connection():
         print("Cannot connect to DolphinCoder model. Aborting.")
         return

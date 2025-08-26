@@ -2,7 +2,9 @@ import json
 import requests
 import time
 import subprocess
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 class DolphinCoderClient:
     def __init__(self, tailscale_ip: str):
@@ -64,7 +66,14 @@ LLM answer:"""
     return math_template.format(harmful_prompt=harmful_prompt)
 
 def main():
-    client = DolphinCoderClient("100.80.12.62")
+    load_dotenv()
+    TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
+    
+    if not TAILSCALE_IP:
+        print("Error: TAILSCALE_IP_ADDRESS not found in environment variables.")
+        return
+        
+    client = DolphinCoderClient(TAILSCALE_IP)
     
     script_dir = Path(__file__).parent
     adv_prompts_path = script_dir.parent / "adv60.json"

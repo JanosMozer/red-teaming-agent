@@ -4,6 +4,7 @@ import requests
 import time
 import argparse
 from pathlib import Path
+from dotenv import load_dotenv
 
 MODEL_NAME = "llama3.1:8b"
 OUTPUT_ANSWERS_DIR = Path("answers")
@@ -109,7 +110,12 @@ def main():
     )
     args = parser.parse_args()
 
-    TAILSCALE_IP = "100.80.12.62"
+    load_dotenv()
+    TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
+    
+    if not TAILSCALE_IP:
+        print("Error: TAILSCALE_IP_ADDRESS not found in environment variables.")
+        return
 
     try:
         agent = LlamaAgent(tailscale_ip=TAILSCALE_IP, model_name=MODEL_NAME)
