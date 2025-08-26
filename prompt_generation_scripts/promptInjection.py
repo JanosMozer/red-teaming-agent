@@ -1,6 +1,11 @@
 import json
 import os
+import argparse
 from pathlib import Path
+
+# Global configuration
+INPUT_FILE_PATH = r"adv60.json"
+OUTPUT_FILE_PATH = r"adversarial_prompts/promptInjection60.json"
 
 def split_prompt_in_half(prompt_text):
     words = prompt_text.split()
@@ -33,21 +38,33 @@ def create_prompt_injection_prompt(original_prompt, prompt_id, prompt_type, harm
     }
 
 def main():
-    script_dir = Path(__file__).parent
+    parser = argparse.ArgumentParser(description="Generate prompt injection attacks from base prompts.")
+    parser.add_argument(
+        "--input-file",
+        type=Path,
+        help="Path to the input JSON file (overrides global variable)"
+    )
+    parser.add_argument(
+        "--output-file",
+        type=Path,
+        help="Path to the output JSON file (overrides global variable)"
+    )
+    args = parser.parse_args()
+
+    # Use command line arguments if provided, otherwise use global variables
+    input_file_path = args.input_file if args.input_file is not None else Path(INPUT_FILE_PATH)
+    output_file_path = args.output_file if args.output_file is not None else Path(OUTPUT_FILE_PATH)
     
-    adv90_path = script_dir.parent / "adv60.json"
-    output_path = script_dir.parent / "prompts" / "promptInjection60.json"
-    
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_file_path.parent.mkdir(parents=True, exist_ok=True)
     
     try:
-        with open(adv90_path, 'r', encoding='utf-8') as f:
+        with open(input_file_path, 'r', encoding='utf-8') as f:
             adv90_data = json.load(f)
     except FileNotFoundError:
-        print(f"Error: Could not find {adv90_path}")
+        print(f"Error: Could not find {input_file_path}")
         return
     except json.JSONDecodeError:
-        print(f"Error: Invalid JSON in {adv90_path}")
+        print(f"Error: Invalid JSON in {input_file_path}")
         return
     
     injection_prompts = []
@@ -69,11 +86,11 @@ def main():
     }
     
     try:
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(output_file_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, indent=2, ensure_ascii=False)
         
         print(f"Successfully created {len(injection_prompts)} prompt injection prompts")
-        print(f"Output saved to: {output_path}")
+        print(f"Output saved to: {output_file_path}")
         
         type_counts = {}
         for item in injection_prompts:

@@ -3,8 +3,13 @@ import requests
 import time
 import subprocess
 import os
+import argparse
 from pathlib import Path
 from dotenv import load_dotenv
+
+# Global configuration
+INPUT_FILE_PATH = r"adv60.json"
+OUTPUT_FILE_PATH = r"adversarial_prompts/json_promptInjection60_EXAMPLE_BASED.json"
 
 class DolphinCoderClient:
     def __init__(self, tailscale_ip: str):
@@ -88,6 +93,23 @@ SUPPLEMENTARY PROMPT:
 """
 
 def main():
+    parser = argparse.ArgumentParser(description="Generate JSON-based prompt injection attacks from base prompts.")
+    parser.add_argument(
+        "--input-file",
+        type=Path,
+        help="Path to the input JSON file (overrides global variable)"
+    )
+    parser.add_argument(
+        "--output-file",
+        type=Path,
+        help="Path to the output JSON file (overrides global variable)"
+    )
+    args = parser.parse_args()
+
+    # Use command line arguments if provided, otherwise use global variables
+    input_file_path = args.input_file if args.input_file is not None else Path(INPUT_FILE_PATH)
+    output_file_path = args.output_file if args.output_file is not None else Path(OUTPUT_FILE_PATH)
+
     load_dotenv()
     TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
     
@@ -100,17 +122,13 @@ def main():
         print("Cannot connect to DolphinCoder model. Aborting.")
         return
 
-    script_dir = Path(__file__).parent
-    adv_prompts_path = script_dir.parent / "adv60.json"
-    output_path = script_dir.parent / "prompts" / "json_promptInjection60_EXAMPLE_BASED.json"
-    
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_file_path.parent.mkdir(parents=True, exist_ok=True)
     
     try:
-        with open(adv_prompts_path, 'r', encoding='utf-8') as f:
+        with open(input_file_path, 'r', encoding='utf-8') as f:
             adv_data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error reading {adv_prompts_path}: {e}")
+        print(f"Error reading {input_file_path}: {e}")
         return
 
     transformed_prompts = []
@@ -149,10 +167,10 @@ def main():
     output_data = {"prompts": transformed_prompts}
     
     try:
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(output_file_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, indent=2, ensure_ascii=False)
         print(f"Successfully created {len(transformed_prompts)} transformed prompts.")
-        print(f"Output saved to: {output_path}")
+        print(f"Output saved to: {output_file_path}")
     except IOError as e:
         print(f"Error writing output file: {e}")
 
