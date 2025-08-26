@@ -8,6 +8,9 @@ from collections import defaultdict, Counter
 import statistics
 from dotenv import load_dotenv
 
+# Global configuration
+INPUT_FILE_PATH = r"midway/guard_evaluations_answers_mathPrompt60_1756217988.json"
+
 class DolphinCoderClient:
     def __init__(self, tailscale_ip: str):
         self.tailscale_ip = tailscale_ip
@@ -102,7 +105,7 @@ def analyze_evaluations(data: dict) -> dict:
 def create_report_prompt(data: dict, stats: dict) -> str:
     evaluations = data.get("evaluations", [])
     
-    prompt = f"""Generate a complete LaTeX document for a cybersecurity red teaming evaluation report.
+    prompt = f"""Generate a complete Markdown document for a cybersecurity red teaming evaluation report.
 
 EVALUATION DATA:
 - Total responses: {stats['total_responses']}
@@ -136,39 +139,34 @@ Sample {i}:
 - Type: {sample.get('type', 'N/A')}
 - Harm: {sample.get('harm_rating', 'N/A')}
 - Violations: {', '.join([cat.get('name', 'N/A') for cat in sample.get('evaluation', {}).get('violated_categories', [])])}
-- Prompt: {sample.get('prompt', 'N/A')[:100]}...
-- Response: {sample.get('response', 'N/A')[:150]}...
 """
 
     prompt += """
 
 REQUIREMENTS:
-1. Generate ONLY LaTeX code - no explanations, no markdown, no extra text
-2. Start with \\documentclass[11pt,a4paper]{article}
-3. End with \\end{document}
-4. Use proper LaTeX formatting throughout
-5. Include all necessary packages
-6. Use booktabs for tables (\\toprule, \\midrule, \\bottomrule)
-7. Use proper LaTeX lists (\\begin{itemize} \\item ... \\end{itemize})
-8. Include model information in methodology section
-9. Create professional tables for all statistics
-10. Use proper LaTeX commands (\\section{}, \\subsection{}, \\textbf{}, etc.)
+1. Generate ONLY Markdown code - no explanations, no LaTeX, no extra text
+2. Use proper Markdown formatting throughout
+3. Use Markdown tables for statistics
+4. Use proper Markdown lists and headers
+5. Include model information in methodology section
+6. Create professional tables for all statistics
+7. Use proper Markdown syntax (# ## ### for headers, **bold**, *italic*, etc.)
+8. Include code blocks where appropriate using ``` ```
+9. Use bullet points and numbered lists appropriately
+10. Make the document well-structured and readable
 
 DOCUMENT STRUCTURE:
-1. Preamble with packages
-2. Title, author, date
-3. \\begin{document}
-4. \\maketitle
-5. Executive Summary
-6. Methodology (include model details)
-7. Results Overview (with tables)
-8. Detailed Analysis
-9. Risk Assessment
-10. Recommendations
-11. Technical Details
-12. \\end{document}
+1. Title (H1)
+2. Executive Summary
+3. Methodology (include model details)
+4. Results Overview (with tables)
+5. Detailed Analysis
+6. Risk Assessment
+7. Recommendations
+8. Technical Details
+9. Appendices (if needed)
 
-Generate the complete LaTeX document now:"""
+Generate the complete Markdown document now:"""
 
     return prompt
 
@@ -177,11 +175,13 @@ def main():
     parser.add_argument(
         "--input-file",
         type=Path,
-        required=True,
-        help="Path to the guard evaluation JSON file"
+        help="Path to the guard evaluation JSON file (overrides global variable)"
     )
     args = parser.parse_args()
 
+    # Use command line argument if provided, otherwise use global variable
+    input_file_path = args.input_file if args.input_file is not None else Path(INPUT_FILE_PATH)
+    
     load_dotenv()
     TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
     
@@ -189,17 +189,17 @@ def main():
         print("Error: TAILSCALE_IP_ADDRESS not found in environment variables.")
         return
         
-    REPORTS_DIR = Path("report generation/reports")
+    REPORTS_DIR = Path("report_generation/reports")
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     try:
-        with open(args.input_file, 'r', encoding='utf-8') as f:
+        with open(input_file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error reading input file: {e}")
         return
 
-    print(f"Analyzing {args.input_file.name}...")
+    print(f"Analyzing {input_file_path.name}...")
     stats = analyze_evaluations(data)
     report_prompt = create_report_prompt(data, stats)
     
@@ -216,7 +216,7 @@ def main():
         return
 
     timestamp = int(time.time())
-    output_filename = f"security_evaluation_report_{args.input_file.stem}_{timestamp}.tex"
+    output_filename = f"security_evaluation_report_{input_file_path.stem}_{timestamp}.md"
     output_path = REPORTS_DIR / output_filename
     
     try:

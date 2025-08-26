@@ -6,7 +6,8 @@ import time
 import argparse
 from dotenv import load_dotenv
 
-# Configuration
+# Global configuration
+INPUT_FILE_PATH = r"adversarial_prompts/mathPrompt60.json"
 MODEL_NAME = "gemini-1.5-flash"
 OUTPUT_ANSWERS_DIR = Path("answers")
 
@@ -84,23 +85,20 @@ def main():
     load_dotenv()
     parser = argparse.ArgumentParser(description="Process prompts through the Gemini API and save responses.")
     parser.add_argument(
-        "--prompts-dir",
-        type=Path,
-        default=Path("prompts"),
-        help="Directory containing .json prompt files (used when --file is not specified)",
-    )
-    parser.add_argument(
         "--file",
         type=Path,
-        help="Process a specific .json file (overrides --prompts-dir)",
+        help="Path to the input JSON file (overrides global variable)"
     )
     parser.add_argument(
         "--num-prompts",
         type=int,
         default=0,
-        help="Number of prompts to process from each file (0 for all prompts)",
+        help="Number of prompts to process from the file (0 for all prompts)"
     )
     args = parser.parse_args()
+
+    # Use command line argument if provided, otherwise use global variable
+    input_file_path = args.file if args.file is not None else Path(INPUT_FILE_PATH)
 
     # Check for API key
     api_key = os.getenv("GOOGLE_GEMINI_API_KEY")
@@ -119,72 +117,31 @@ def main():
     # Create output directory
     OUTPUT_ANSWERS_DIR.mkdir(parents=True, exist_ok=True)
     
-    # Process files based on arguments
-    if args.file:
-        # Single file mode: Process only the specified file
-        print(f"Single file mode: Processing {args.file}")
+    # Process the file
+    print(f"Processing file: {input_file_path}")
+    
+    if not input_file_path.exists():
+        print(f"File not found: {input_file_path}")
+        return
+    if not input_file_path.suffix == '.json':
+        print(f"File must be a .json file: {input_file_path}")
+        return
         
-        if not args.file.exists():
-            print(f"File not found: {args.file}")
-            return
-        if not args.file.suffix == '.json':
-            print(f"File must be a .json file: {args.file}")
-            return
-            
-        # Process the single file
-        file_responses = process_file(agent, args.file, args.num_prompts)
-        
-        if file_responses:
-            # Save responses to output file
-            output_file = OUTPUT_ANSWERS_DIR / f"answers_{args.file.stem}.json"
-            try:
-                with open(output_file, 'w', encoding='utf-8') as f:
-                    json.dump({"responses": file_responses}, f, indent=2, ensure_ascii=False)
-                print(f"Single file processing complete!")
-                print(f"Responses saved to: {output_file}")
-            except IOError as e:
-                print(f"Error writing output file: {e}")
-        else:
-            print("No responses generated for the specified file.")
-            
+    # Process the file
+    file_responses = process_file(agent, input_file_path, args.num_prompts)
+    
+    if file_responses:
+        # Save responses to output file
+        output_file = OUTPUT_ANSWERS_DIR / f"answers_{input_file_path.stem}.json"
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                json.dump({"responses": file_responses}, f, indent=2, ensure_ascii=False)
+            print(f"Processing complete!")
+            print(f"Responses saved to: {output_file}")
+        except IOError as e:
+            print(f"Error writing output file: {e}")
     else:
-        # Directory mode: Process all .json files in the specified directory
-        print(f"Directory mode: Processing all .json files in {args.prompts_dir}")
-        
-        if not args.prompts_dir.is_dir():
-            print(f"Prompts directory not found: {args.prompts_dir}")
-            return
-            
-        # Find all JSON files in the directory
-        prompt_files = list(args.prompts_dir.glob("*.json"))
-        if not prompt_files:
-            print(f"No .json files found in {args.prompts_dir}")
-            return
-
-        print(f"Found {len(prompt_files)} files to process:")
-        for file_path in prompt_files:
-            print(f"  - {file_path.name}")
-        
-        # Process each file in the directory
-        processed_count = 0
-        for file_path in prompt_files:
-            print(f"\n--- Processing {file_path.name} ---")
-            file_responses = process_file(agent, file_path, args.num_prompts)
-            
-            if file_responses:
-                # Save responses for this file
-                output_file = OUTPUT_ANSWERS_DIR / f"answers_{file_path.stem}.json"
-                try:
-                    with open(output_file, 'w', encoding='utf-8') as f:
-                        json.dump({"responses": file_responses}, f, indent=2, ensure_ascii=False)
-                    print(f"Responses for {file_path.name} saved to {output_file}")
-                    processed_count += 1
-                except IOError as e:
-                    print(f"Error writing output file for {file_path.name}: {e}")
-            else:
-                print(f"No responses generated for {file_path.name}")
-
-        print(f"Directory processing complete! {processed_count}/{len(prompt_files)} files processed.")
+        print("No responses generated for the specified file.")
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@ import argparse
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Global configuration
+INPUT_FILE_PATH = r"adversarial_prompts/mathPrompt60.json"
 MODEL_NAME = "llama3.1:8b"
 OUTPUT_ANSWERS_DIR = Path("answers")
 
@@ -99,16 +101,18 @@ def main():
     parser.add_argument(
         "--file",
         type=Path,
-        required=True,
-        help="Process a specific .json file",
+        help="Path to the input JSON file (overrides global variable)"
     )
     parser.add_argument(
         "--num-prompts",
         type=int,
         default=0,
-        help="Number of prompts to process from the file (0 for all prompts)",
+        help="Number of prompts to process from the file (0 for all prompts)"
     )
     args = parser.parse_args()
+
+    # Use command line argument if provided, otherwise use global variable
+    input_file_path = args.file if args.file is not None else Path(INPUT_FILE_PATH)
 
     load_dotenv()
     TAILSCALE_IP = os.getenv("TAILSCALE_IP_ADDRESS")
@@ -129,23 +133,23 @@ def main():
 
     OUTPUT_ANSWERS_DIR.mkdir(parents=True, exist_ok=True)
     
-    print(f"Single file mode: Processing {args.file}")
+    print(f"Processing file: {input_file_path}")
     
-    if not args.file.exists():
-        print(f"File not found: {args.file}")
+    if not input_file_path.exists():
+        print(f"File not found: {input_file_path}")
         return
-    if not args.file.suffix == '.json':
-        print(f"File must be a .json file: {args.file}")
+    if not input_file_path.suffix == '.json':
+        print(f"File must be a .json file: {input_file_path}")
         return
         
-    file_responses = process_file(agent, args.file, args.num_prompts)
+    file_responses = process_file(agent, input_file_path, args.num_prompts)
     
     if file_responses:
-        output_file = OUTPUT_ANSWERS_DIR / f"answers_{args.file.stem}.json"
+        output_file = OUTPUT_ANSWERS_DIR / f"answers_{input_file_path.stem}.json"
         try:
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump({"responses": file_responses}, f, indent=2, ensure_ascii=False)
-            print(f"Single file processing complete!")
+            print(f"Processing complete!")
             print(f"Responses saved to: {output_file}")
         except IOError as e:
             print(f"Error writing output file: {e}")

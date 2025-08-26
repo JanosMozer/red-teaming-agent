@@ -1,11 +1,3 @@
 google-generativeai
 python-dotenv
 requests
-pathlib2
-json
-requirements
-time
-os
-argparse
-dotenv
-collections
