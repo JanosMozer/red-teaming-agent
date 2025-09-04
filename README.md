@@ -2,6 +2,10 @@
 
 A comprehensive framework for testing Large Language Model (LLM) safety through adversarial prompt generation, automated testing, and content moderation evaluation.
 
+<div align="center">
+  <img src="src/framework.png" alt="Red-Teaming Agent Framework" width="600"/>
+</div>
+
 ## Overview
 
 This project implements a complete red-teaming pipeline for LLMs, consisting of three main components:
