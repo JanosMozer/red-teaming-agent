@@ -112,3 +112,5 @@ Each component can be configured through command-line arguments and environment 
 ## Dependencies
 
 See requirements
+
+## Techinal documentation can be found inside `src/` folder.
