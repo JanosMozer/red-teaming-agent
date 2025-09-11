@@ -1,7 +1,7 @@
 # Red-Teaming Agent
 
 <div align="center">
-  <img src="bad_company_logo_1.jpg" alt="Bad Company" width="200"/>
+  <img src="src/bad_company_logo_1.jpeg" alt="Bad Company" width="200"/>
 </div>
 
 A comprehensive framework for testing Large Language Model (LLM) safety through adversarial prompt generation, automated testing, and content moderation evaluation.
