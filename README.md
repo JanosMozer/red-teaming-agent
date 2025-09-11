@@ -43,10 +43,14 @@ red-teaming-agent/
 
 Located in `prompt_generation_scripts/`, these scripts generate adversarial prompts using different techniques:
 
-- **promptInjection.py**: Basic prompt injection attacks
-- **json_promptInjection.py**: JSON-structured injection attacks
-- **yaml_promptInjection.py**: YAML-structured injection attacks  
-- **mathPrompt.py**: Mathematical reasoning-based attacks
+- **Prompt Injection**: Basic prompt injection attacks
+- **JSON Prompt Injection**: JSON-structured injection attacks with example-based transformations
+- **YAML Prompt Injection**: YAML-structured injection attacks with example-based transformations
+- **Math Prompt**: Mathematical reasoning-based attacks
+- **Citation**: Authority-based jailbreaking using academic citations and references
+- **Likert-based Jailbreaks**: Academic evaluation frameworks with scoring systems
+- **Multilingual**: Translation-based attacks alternating between French and German
+- **Iterative Jailbreak**: Advanced feedback-driven refinement with cumulative learning
 
 Generated prompts are saved to `adversarial_prompts/` in JSON format.
 
